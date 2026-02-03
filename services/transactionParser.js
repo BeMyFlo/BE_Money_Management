@@ -99,6 +99,9 @@ class TransactionParser {
   extractAmount(text) {
     // Patterns for amount extraction (Vietnamese format priority)
     const patterns = [
+      // VPBank specific: "Số tiền trích nợ: 200,000 VND" or "Debit Amount"
+      /(?:số tiền trích nợ|debit amount)[:\s]+([0-9,]+)\s*vnd/i,
+
       // Vietnamese format: "1,500,000 VND" or "Amount 1,500,000 VND"
       /amount[:\s]+([0-9,]+)\s*vnd/i,
       /(?:số tiền|so tien)[:\s]+([0-9,]+)\s*vnd/i,
@@ -164,6 +167,10 @@ class TransactionParser {
 
     // Ưu tiên lấy "Nội dung chuyển tiền" từ email ngân hàng Việt Nam
     const vietnamesePatterns = [
+      // VPBank format: "Nội dung chuyển tiền: HA THANH TU chuyen tien"
+      /nội dung chuyển tiền[:\s]+([^\n\r<>]+?)(?:\s*(?:<|cám ơn|thank you|^\s*$))/i,
+      /details\s+of\s+payment[:\s]+([^\n\r<>]+?)(?:\s*(?:<|cám ơn|thank you|^\s*$))/i,
+
       // Match text sau "Details of Payment" cho đến khi gặp "Cám ơn" hoặc end
       /details\s+of\s+payment[\s\S]*?>\s*([A-Z][A-Za-z0-9\s]+?)(?:\s*<|cám ơn|thank you)/i,
       // Match text sau "Nội dung chuyển tiền"
