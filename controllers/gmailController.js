@@ -4,6 +4,7 @@ const Expense = require("../models/Expense");
 const Category = require("../models/Category");
 const gmailService = require("../services/gmailService");
 const transactionParser = require("../services/transactionParser");
+const removeVietnameseTones = require("../utils/removeVietnameseTones");
 
 // @desc    Get Gmail OAuth URL
 // @route   GET /api/gmail/auth-url
@@ -217,7 +218,8 @@ exports.syncEmails = async (req, res, next) => {
             const month = `${transactionDate.getFullYear()}-${String(transactionDate.getMonth() + 1).padStart(2, "0")}`;
 
             // Check if category exists, create if not
-            const categoryName = transaction.category.toLowerCase().trim();
+            // Remove Vietnamese tones for name to match SMS/email content
+            const categoryName = removeVietnameseTones(transaction.category);
             let category = await Category.findOne({
               userId: req.user._id,
               name: categoryName,
@@ -231,9 +233,6 @@ exports.syncEmails = async (req, res, next) => {
                 displayName: transaction.category.trim(),
                 color: "#667eea", // Default color
               });
-              console.log(
-                `Created new category: ${category.displayName} for user ${req.user._id}`,
-              );
             }
 
             await Expense.create({

@@ -1,5 +1,6 @@
 const Category = require("../models/Category");
 const Expense = require("../models/Expense");
+const removeVietnameseTones = require("../utils/removeVietnameseTones");
 
 // @desc    Get user's categories
 // @route   GET /api/categories
@@ -26,7 +27,8 @@ exports.createCategory = async (req, res, next) => {
   try {
     const { name, displayName, color } = req.body;
 
-    const categoryName = (name || displayName).toLowerCase().trim();
+    // Remove Vietnamese tones for name to match SMS/email content
+    const categoryName = removeVietnameseTones(name || displayName);
 
     // Check if category exists
     let category = await Category.findOne({

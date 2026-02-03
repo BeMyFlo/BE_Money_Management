@@ -37,49 +37,25 @@ exports.getExpenses = async (req, res, next) => {
       }
     }
 
-    console.log("\n=== GET EXPENSES DEBUG ===");
-    console.log("Query params:", req.query);
-    console.log("Built query:", JSON.stringify(query, null, 2));
-    console.log("Limit:", limit, "Page:", page);
-
     // Check all records for this user (no month filter)
     const allUserExpenses = await Expense.find({ userId: req.user._id })
       .select("transactionDate month amount description category")
       .sort({ transactionDate: -1 })
       .limit(15);
 
-    console.log("\n=== ALL USER EXPENSES (max 15) ===");
-    allUserExpenses.forEach((exp, idx) => {
-      console.log(
-        `${idx + 1}. Date: ${exp.transactionDate.toISOString().split("T")[0]}, Month: "${exp.month}", Amount: ${exp.amount}, Desc: ${exp.description.substring(0, 30)}`,
-      );
-    });
+    allUserExpenses.forEach((exp, idx) => {});
 
     // Execute query with pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     // Count total first
     const total = await Expense.countDocuments(query);
-    console.log("Total records matching query:", total);
 
     const expenses = await Expense.find(query)
       .populate("categoryId", "name displayName color")
       .sort({ transactionDate: -1 })
       .limit(parseInt(limit))
       .skip(skip);
-
-    console.log("Records returned:", expenses.length);
-    console.log("Skip:", skip);
-    console.log(
-      "First 3 expenses:",
-      expenses.slice(0, 3).map((e) => ({
-        date: e.transactionDate,
-        amount: e.amount,
-        description: e.description,
-        category: e.category,
-        month: e.month,
-      })),
-    );
 
     res.json({
       success: true,

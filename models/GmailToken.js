@@ -55,8 +55,6 @@ gmailTokenSchema.methods.getDecryptedRefreshToken = function () {
 function encrypt(text) {
   const algorithm = "aes-256-cbc";
   const keyStr = process.env.ENCRYPTION_KEY || "defaultkey12345678901234567890";
-  console.log("ENCRYPT - Key from env:", keyStr);
-  console.log("ENCRYPT - Key length:", keyStr.length);
 
   const key = Buffer.from(keyStr, "utf8").slice(0, 32);
   const iv = crypto.randomBytes(16);
@@ -71,9 +69,6 @@ function encrypt(text) {
 function decrypt(text) {
   const algorithm = "aes-256-cbc";
   const keyStr = process.env.ENCRYPTION_KEY || "defaultkey12345678901234567890";
-  console.log("DECRYPT - Key from env:", keyStr);
-  console.log("DECRYPT - Key length:", keyStr.length);
-  console.log("DECRYPT - Text to decrypt:", text);
 
   const key = Buffer.from(keyStr, "utf8").slice(0, 32);
 

@@ -23,15 +23,12 @@ exports.autoSyncAll = async (req, res, next) => {
       });
     }
 
-    console.log("\n=== AUTO-SYNC CRON JOB STARTED ===");
-    console.log("Time:", new Date().toISOString());
 
     // Get all users with Gmail connected
     const users = await User.find({ gmailConnected: true }).select(
       "_id name email",
     );
 
-    console.log(`Found ${users.length} users with Gmail connected`);
 
     let successCount = 0;
     let errorCount = 0;
@@ -44,13 +41,11 @@ exports.autoSyncAll = async (req, res, next) => {
     // Sync for each user
     for (const user of users) {
       try {
-        console.log(`\nSyncing for user: ${user.email} (${user._id})`);
 
         // Get user's Gmail token
         const tokenDoc = await GmailToken.findOne({ userId: user._id });
 
         if (!tokenDoc) {
-          console.log(`No Gmail token found for ${user.email}`);
           errorCount++;
           continue;
         }
@@ -60,7 +55,6 @@ exports.autoSyncAll = async (req, res, next) => {
         const refreshToken = tokenDoc.getDecryptedRefreshToken();
 
         if (new Date() >= tokenDoc.expiresAt) {
-          console.log("Token expired, refreshing...");
           const newTokens = await gmailService.refreshAccessToken(refreshToken);
           accessToken = newTokens.access_token;
 
@@ -157,9 +151,6 @@ exports.autoSyncAll = async (req, res, next) => {
           lastGmailSync: new Date(),
         });
 
-        console.log(
-          `✓ Synced ${newTransactions} new transactions for ${user.email}`,
-        );
         successCount++;
       } catch (error) {
         console.error(`Error syncing for user ${user.email}:`, error.message);
@@ -172,9 +163,6 @@ exports.autoSyncAll = async (req, res, next) => {
       }
     }
 
-    console.log("\n=== AUTO-SYNC CRON JOB COMPLETED ===");
-    console.log(`Success: ${successCount} users`);
-    console.log(`Errors: ${errorCount} users`);
 
     res.json({
       success: true,
