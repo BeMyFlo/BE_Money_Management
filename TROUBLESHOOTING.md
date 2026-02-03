@@ -33,6 +33,7 @@ PORT=5000
 ```
 
 **⚠️ LƯU Ý:**
+
 - Sau khi thêm/sửa env vars, phải **Redeploy** project!
 - Click **Deployments** tab → Chọn latest deployment → Click **⋯** → **Redeploy**
 
@@ -55,6 +56,7 @@ PORT=5000
 File `vercel.json` mới đã được cập nhật (bỏ `env` section trong vercel.json, dùng Vercel Dashboard để add env vars thay vì).
 
 Push code mới:
+
 ```bash
 cd backend
 git add .
@@ -78,6 +80,7 @@ Vercel sẽ tự động redeploy.
 ### Bước 5: Test Backend Health
 
 Sau khi deploy xong, test endpoint:
+
 ```
 https://your-backend.vercel.app/health
 ```
@@ -89,11 +92,13 @@ Nếu thấy response `{"success": true}` → Backend đã chạy!
 ## 📊 Check Deployment Status
 
 ### ✅ Deployment Successful Indicators:
+
 - Status: **Ready** (màu xanh)
 - Logs không có error
 - Health endpoint trả về 200 OK
 
 ### ❌ Deployment Failed Indicators:
+
 - Status: **Error** (màu đỏ)
 - Logs có error messages
 - Endpoints trả về 500
@@ -103,11 +108,13 @@ Nếu thấy response `{"success": true}` → Backend đã chạy!
 ## 🔍 Debug Commands
 
 ### Check logs realtime:
+
 ```bash
 npx vercel logs your-backend.vercel.app --follow
 ```
 
 ### Test locally trước khi deploy:
+
 ```bash
 cd backend
 npm install
@@ -120,15 +127,19 @@ npm start
 ## 💡 Common Issues
 
 ### Issue 1: MongoDB Connection Failed
+
 **Fix:** Whitelist 0.0.0.0/0 trong MongoDB Atlas Network Access
 
 ### Issue 2: Missing Environment Variables
+
 **Fix:** Add tất cả env vars trong Vercel Dashboard, sau đó Redeploy
 
 ### Issue 3: crypto module error
+
 **Fix:** `crypto` là built-in Node.js module, xóa `"crypto": "^1.0.1"` khỏi package.json dependencies
 
 ### Issue 4: Function timeout
+
 **Fix:** Vercel free tier có limit 10s, check code có blocking operations không
 
 ---
