@@ -13,6 +13,7 @@ const gmailRoutes = require("./routes/gmailRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const cronRoutes = require("./routes/cronRoutes");
+const bankEmailConfigRoutes = require("./routes/bankEmailConfigRoutes");
 
 // Initialize app
 const app = express();
@@ -75,6 +76,7 @@ app.use("/api/gmail", gmailRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/cron", cronRoutes);
+app.use("/api/bank-email-configs", bankEmailConfigRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);

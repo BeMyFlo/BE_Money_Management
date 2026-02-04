@@ -145,6 +145,22 @@ exports.syncEmails = async (req, res, next) => {
   try {
     const { month } = req.body; // Format: YYYY-MM
 
+    // Check if user has any active bank email configs
+    const BankEmailConfig = require("../models/BankEmailConfig");
+    const activeConfigs = await BankEmailConfig.find({
+      userId: req.user._id,
+      isActive: true,
+    });
+
+    if (!activeConfigs || activeConfigs.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Bạn chưa có cấu hình email ngân hàng nào. Vui lòng tạo cấu hình trước khi sync email.",
+        requireConfig: true,
+      });
+    }
+
     // Get stored tokens
     const tokenDoc = await GmailToken.findOne({ userId: req.user._id });
 
@@ -202,7 +218,10 @@ exports.syncEmails = async (req, res, next) => {
     for (const message of messages) {
       try {
         const emailData = gmailService.parseMessage(message);
-        const transaction = transactionParser.parseTransaction(emailData);
+        const transaction = await transactionParser.parseTransaction(
+          emailData,
+          req.user._id.toString(),
+        );
 
         if (transaction) {
           processed++;

@@ -23,12 +23,10 @@ exports.autoSyncAll = async (req, res, next) => {
       });
     }
 
-
     // Get all users with Gmail connected
     const users = await User.find({ gmailConnected: true }).select(
       "_id name email",
     );
-
 
     let successCount = 0;
     let errorCount = 0;
@@ -41,7 +39,6 @@ exports.autoSyncAll = async (req, res, next) => {
     // Sync for each user
     for (const user of users) {
       try {
-
         // Get user's Gmail token
         const tokenDoc = await GmailToken.findOne({ userId: user._id });
 
@@ -95,6 +92,9 @@ exports.autoSyncAll = async (req, res, next) => {
         for (const message of messages) {
           try {
             const emailData = gmailService.parseMessage(message);
+            console.log("Parsed email data:", emailData);4
+            //dừng lại ở đây
+            
             const transaction = transactionParser.parseTransaction(emailData);
 
             if (transaction) {
@@ -162,7 +162,6 @@ exports.autoSyncAll = async (req, res, next) => {
         });
       }
     }
-
 
     res.json({
       success: true,
