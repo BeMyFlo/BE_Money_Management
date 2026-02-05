@@ -129,12 +129,19 @@ exports.createManualExpense = async (req, res, next) => {
       });
     }
 
+    // Create month from transactionDate
+    const date = new Date(transactionDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const monthString = `${year}-${month}`;
+
     const expense = await Expense.create({
       userId: req.user._id,
       amount,
       description,
       categoryId: categoryDoc._id,
       transactionDate,
+      month: monthString,
       bankName: bankName || "",
       extractedFrom: "manual",
     });
@@ -184,7 +191,14 @@ exports.updateExpense = async (req, res, next) => {
     }
     if (description) expense.description = description;
     if (amount) expense.amount = amount;
-    if (transactionDate) expense.transactionDate = transactionDate;
+    if (transactionDate) {
+      expense.transactionDate = transactionDate;
+      // Update month when transactionDate changes
+      const date = new Date(transactionDate);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      expense.month = `${year}-${month}`;
+    }
 
     await expense.save();
     await expense.populate("categoryId", "name displayName color");

@@ -92,9 +92,8 @@ exports.autoSyncAll = async (req, res, next) => {
         for (const message of messages) {
           try {
             const emailData = gmailService.parseMessage(message);
-            console.log("Parsed email data:", emailData);4
-            //dừng lại ở đây
-            
+            console.log("Parsed email data:", emailData);
+
             const transaction = transactionParser.parseTransaction(emailData);
 
             if (transaction) {

@@ -120,11 +120,16 @@ exports.getCategoryStats = async (req, res, next) => {
 // @access  Private
 exports.updateCategory = async (req, res, next) => {
   try {
-    const { displayName, color } = req.body;
+    const { name, displayName, color } = req.body;
+
+    const updateData = { displayName, color };
+    if (name) {
+      updateData.name = removeVietnameseTones(name);
+    }
 
     const category = await Category.findOneAndUpdate(
       { _id: req.params.id, userId: req.user._id },
-      { displayName, color },
+      updateData,
       { new: true, runValidators: true },
     );
 
